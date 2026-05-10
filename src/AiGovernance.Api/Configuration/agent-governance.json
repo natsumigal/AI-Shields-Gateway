@@ -1,0 +1,14 @@
+{
+  "AgentGovernance": {
+    "Enabled": true,
+    "PolicyPaths": [
+      "Configuration/Policies/agent-tools.yaml"
+    ],
+    "ConflictStrategy": "DenyOverrides",
+    "EnableRings": true,
+    "EnablePromptInjectionDetection": true,
+    "EnableCircuitBreaker": true,
+    "EnableAudit": true,
+    "EnableMetrics": true
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/ai-governance/model-registry.schema.json",
+  "title": "AI Governance Model Registry",
+  "type": "object",
+  "required": ["ModelRegistry"],
+  "properties": {
+    "ModelRegistry": {
+      "type": "object",
+      "required": ["DefaultModelId", "Models"],
+      "properties": {
+        "DefaultModelId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "Models": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["ModelId", "Provider", "Status", "RiskTier"],
+            "properties": {
+              "ModelId": { "type": "string", "minLength": 1 },
+              "DisplayName": { "type": "string" },
+              "Provider": { "type": "string", "minLength": 1 },
+              "Version": { "type": "string" },
+              "Owner": { "type": "string" },
+              "Status": { "type": "string" },
+              "RiskTier": {
+                "type": "string",
+                "enum": ["Low", "Medium", "High", "Critical"]
+              },
+              "ApprovedPurposes": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "ProhibitedPurposes": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "DataClassifications": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "Capabilities": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "Limitations": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "PolicyVersion": { "type": "string" },
+              "EvaluationSummary": { "type": "string" },
+              "LastReviewedAt": {
+                "type": ["string", "null"],
+                "format": "date-time"
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

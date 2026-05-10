@@ -1,0 +1,35 @@
+apiVersion: governance.toolkit/v1
+version: "1.0"
+name: ai-governance-agent-tools
+default_action: deny
+rules:
+  - name: allow-read-only-tools
+    condition: "tool_name == 'file_read'"
+    action: allow
+    priority: 100
+
+  - name: allow-search-tools
+    condition: "tool_name == 'web_search'"
+    action: allow
+    priority: 90
+
+  - name: rate-limit-http-tools
+    condition: "tool_name == 'http_request'"
+    action: rate_limit
+    limit: "10/minute"
+    priority: 80
+
+  - name: block-file-write
+    condition: "tool_name == 'file_write'"
+    action: deny
+    priority: 200
+
+  - name: block-shell-execution
+    condition: "tool_name == 'shell_exec'"
+    action: deny
+    priority: 200
+
+  - name: block-email-send
+    condition: "tool_name == 'email_send'"
+    action: deny
+    priority: 180

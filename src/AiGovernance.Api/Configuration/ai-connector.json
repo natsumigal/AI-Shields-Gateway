@@ -1,0 +1,15 @@
+{
+  "AiConnector": {
+    "Mode": "Mock",
+    "Provider": "MockProvider",
+    "Model": "mock-governed-model",
+    "Endpoint": "https://api.openai.com/v1/responses",
+    "TimeoutSeconds": 30,
+    "ApiKeyEnvironmentVariable": "OPENAI_API_KEY",
+    "OrganizationIdEnvironmentVariable": "OPENAI_ORG_ID",
+    "ProjectIdEnvironmentVariable": "OPENAI_PROJECT_ID",
+    "SystemInstruction": "You are a helpful AI assistant behind an AI governance gateway. Answer normally when requests are allowed, and avoid unsafe, sensitive, or policy-violating output.",
+    "MaxOutputTokens": 600,
+    "Temperature": 0.2
+  }
+}

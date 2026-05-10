@@ -1,0 +1,108 @@
+{
+  "RiskRegister": {
+    "Version": "1.0",
+    "Risks": [
+      {
+        "RiskId": "AI-RISK-001",
+        "Category": "HarmfulContent",
+        "Description": "The system may receive prompts requesting self-harm, violence, or physical harm instructions.",
+        "Likelihood": "Medium",
+        "Impact": "High",
+        "Treatment": "Block at InputValidator, audit, and return a safe blocked decision.",
+        "MappedFrameworks": [
+          "NIST-AI-RMF",
+          "NIST-AI-600-1",
+          "ISO-IEC-42001"
+        ]
+      },
+      {
+        "RiskId": "AI-RISK-002",
+        "Category": "PromptInjection",
+        "Description": "Users may attempt to override instructions, leak hidden prompts, or bypass policy.",
+        "Likelihood": "High",
+        "Impact": "High",
+        "Treatment": "Detect in InputValidator, score in RiskAnalyzer, route to human review.",
+        "MappedFrameworks": [
+          "OWASP-LLM-2025",
+          "NIST-AI-600-1",
+          "NIST-CSF-2"
+        ]
+      },
+      {
+        "RiskId": "AI-RISK-003",
+        "Category": "SensitiveInfo",
+        "Description": "Prompts or outputs may contain personal data, credentials, secrets, or regulated information.",
+        "Likelihood": "High",
+        "Impact": "High",
+        "Treatment": "Review sensitive input and redact sensitive output patterns.",
+        "MappedFrameworks": [
+          "OWASP-LLM-2025",
+          "NIST-CSF-2",
+          "EU-AI-ACT-GPAI"
+        ]
+      },
+      {
+        "RiskId": "AI-RISK-004",
+        "Category": "BiasDiscrimination",
+        "Description": "The system may be used to support discriminatory or protected-class decisions.",
+        "Likelihood": "Medium",
+        "Impact": "High",
+        "Treatment": "Detect protected-class terms, route to human review, and audit the decision.",
+        "MappedFrameworks": [
+          "NIST-AI-RMF",
+          "ISO-IEC-42001",
+          "EU-AI-ACT-GPAI"
+        ]
+      },
+      {
+        "RiskId": "AI-RISK-005",
+        "Category": "SupplyChain",
+        "Description": "AI provider, model, dependency, or configuration changes may introduce security or governance risk.",
+        "Likelihood": "Medium",
+        "Impact": "High",
+        "Treatment": "Track provider and model metadata, externalize connector settings, and review dependencies before production.",
+        "MappedFrameworks": [
+          "OWASP-LLM-2025",
+          "NIST-CSF-2",
+          "ISO-IEC-42001"
+        ]
+      },
+      {
+        "RiskId": "AI-RISK-006",
+        "Category": "ImproperOutputHandling",
+        "Description": "AI output may contain unsafe instructions, secrets, or content unsafe to pass to downstream systems.",
+        "Likelihood": "Medium",
+        "Impact": "High",
+        "Treatment": "Sanitize output before returning to the caller and audit applied controls.",
+        "MappedFrameworks": [
+          "OWASP-LLM-2025",
+          "NIST-AI-600-1"
+        ]
+      },
+      {
+        "RiskId": "AI-RISK-007",
+        "Category": "UnboundedConsumption",
+        "Description": "Large prompts, repeated requests, or expensive model calls can create cost and availability risk.",
+        "Likelihood": "Medium",
+        "Impact": "Medium",
+        "Treatment": "Limit prompt length now; add tenant rate limits and model budget controls before production.",
+        "MappedFrameworks": [
+          "OWASP-LLM-2025",
+          "NIST-CSF-2"
+        ]
+      },
+      {
+        "RiskId": "AI-RISK-008",
+        "Category": "GpaiProviderObligations",
+        "Description": "If the organization provides or significantly modifies a GPAI model, EU AI Act provider obligations may apply.",
+        "Likelihood": "DependsOnUseCase",
+        "Impact": "High",
+        "Treatment": "Maintain model documentation, copyright policy evidence, training-content summaries, systemic risk reviews, and incident records outside the gateway.",
+        "MappedFrameworks": [
+          "EU-AI-ACT-GPAI",
+          "ISO-IEC-42001"
+        ]
+      }
+    ]
+  }
+}

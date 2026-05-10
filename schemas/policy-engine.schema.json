@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/ai-governance/policy-engine.schema.json",
+  "title": "AI Governance Policy Engine",
+  "type": "object",
+  "required": ["Policy"],
+  "properties": {
+    "Policy": {
+      "type": "object",
+      "required": ["HumanReviewScore", "BlockScore", "HumanReviewHighRisk"],
+      "properties": {
+        "HumanReviewScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "BlockScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "HumanReviewHighRisk": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

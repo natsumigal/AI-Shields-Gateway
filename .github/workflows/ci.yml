@@ -1,0 +1,33 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore AiGovernance.sln
+
+      - name: Build
+        run: dotnet build AiGovernance.sln --no-restore -c Release
+
+      - name: Test
+        run: dotnet test AiGovernance.sln --no-build -c Release --logger trx --results-directory TestResults

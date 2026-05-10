@@ -1,0 +1,8 @@
+{
+  "RiskEngine": {
+    "LowThreshold": 0.25,
+    "MediumThreshold": 0.5,
+    "HighThreshold": 0.75,
+    "CriticalThreshold": 0.9
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/ai-governance/blocked-terms.schema.json",
+  "title": "AI Governance Blocked Terms",
+  "type": "object",
+  "required": ["BlockedTerms"],
+  "properties": {
+    "BlockedTerms": {
+      "type": "object",
+      "required": ["Terms"],
+      "properties": {
+        "Terms": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

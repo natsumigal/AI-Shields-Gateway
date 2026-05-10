@@ -1,0 +1,7 @@
+{
+  "Audit": {
+    "Enabled": true,
+    "RetentionDays": 90,
+    "IncludePromptInAudit": false
+  }
+}

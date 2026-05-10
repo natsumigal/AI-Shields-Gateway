@@ -1,0 +1,550 @@
+{
+  "ComplianceFrameworks": {
+    "Version": "1.0",
+    "Owner": "AI Governance Team",
+    "Scope": "Traceability mapping for the AI governance gateway. This supports governance evidence; it is not a certification or legal opinion.",
+    "Frameworks": [
+      {
+        "FrameworkId": "NIST-AI-RMF",
+        "Name": "NIST AI Risk Management Framework",
+        "Version": "1.0",
+        "Type": "Voluntary AI risk management framework",
+        "SourceUrl": "https://www.nist.gov/itl/ai-risk-management-framework",
+        "AlignmentSummary": "The gateway maps to the AI RMF Govern, Map, Measure, and Manage functions through policy ownership, risk register, validation, risk scoring, policy decisions, output controls, and audit evidence.",
+        "ProjectComponents": [
+          "GovernancePolicy",
+          "RiskRegister",
+          "InputValidator",
+          "RiskAnalyzer",
+          "PolicyEngine",
+          "OutputGuard",
+          "AuditLogger"
+        ],
+        "Requirements": [
+          {
+            "RequirementId": "AI-RMF-GOVERN",
+            "Title": "Govern AI risk",
+            "Description": "Establish policy, accountability, risk appetite, and traceable controls for AI usage.",
+            "MappedComponents": [
+              "GovernancePolicy",
+              "ComplianceFrameworkCatalog",
+              "AuditLogger"
+            ],
+            "Evidence": [
+              "Configuration/governance-policy.json",
+              "Configuration/compliance-frameworks.json",
+              "GET /v1/audit/{correlationId}"
+            ],
+            "Status": "Implemented",
+            "Notes": "Organizational approvals and ownership reviews still need to happen outside the codebase."
+          },
+          {
+            "RequirementId": "AI-RMF-MAP",
+            "Title": "Map AI context and risks",
+            "Description": "Identify use context, risk categories, affected parties, and risk sources.",
+            "MappedComponents": [
+              "RiskRegister",
+              "ApiProcessRequest",
+              "InputValidator"
+            ],
+            "Evidence": [
+              "Configuration/risk-register.json",
+              "POST /api/process request metadata"
+            ],
+            "Status": "Implemented",
+            "Notes": "Use case inventory and stakeholder impact assessment should be added for production."
+          },
+          {
+            "RequirementId": "AI-RMF-MEASURE",
+            "Title": "Measure AI risk",
+            "Description": "Analyze prompts and responses for risk signals, severity, and control outcomes.",
+            "MappedComponents": [
+              "InputValidator",
+              "RiskAnalyzer",
+              "OutputGuard"
+            ],
+            "Evidence": [
+              "Configuration/input-validator.json",
+              "Configuration/risk-engine.json",
+              "Configuration/output-guard.json"
+            ],
+            "Status": "Implemented",
+            "Notes": "Add quantitative evaluation sets and model-specific test results before claiming mature measurement."
+          },
+          {
+            "RequirementId": "AI-RMF-MANAGE",
+            "Title": "Manage AI risk",
+            "Description": "Apply controls that allow, block, or route requests to human review.",
+            "MappedComponents": [
+              "PolicyEngine",
+              "AuditLogger"
+            ],
+            "Evidence": [
+              "Configuration/policy-engine.json",
+              "POST /api/process decision",
+              "GET /v1/audit/{correlationId}"
+            ],
+            "Status": "Implemented",
+            "Notes": "Incident playbooks and exception workflows should be connected in a production deployment."
+          }
+        ]
+      },
+      {
+        "FrameworkId": "NIST-AI-600-1",
+        "Name": "NIST AI 600-1 Generative AI Profile",
+        "Version": "July 2024",
+        "Type": "Generative AI profile for NIST AI RMF",
+        "SourceUrl": "https://doi.org/10.6028/NIST.AI.600-1",
+        "AlignmentSummary": "The gateway supports generative AI risk management by detecting prompt injection, harmful requests, sensitive information, bias, improper output handling, and audit-relevant model metadata.",
+        "ProjectComponents": [
+          "InputValidator",
+          "RiskAnalyzer",
+          "PolicyEngine",
+          "AIConnector",
+          "OutputGuard",
+          "AuditLogger"
+        ],
+        "Requirements": [
+          {
+            "RequirementId": "GAI-GOVERNANCE",
+            "Title": "Govern generative AI use",
+            "Description": "Maintain controls, responsibilities, and traceability for generative AI usage.",
+            "MappedComponents": [
+              "GovernancePolicy",
+              "AuditLogger"
+            ],
+            "Evidence": [
+              "Configuration/governance-policy.json",
+              "GET /v1/audit/{correlationId}"
+            ],
+            "Status": "Implemented",
+            "Notes": "Model cards, acceptable use policy, and deployment approvals should be attached separately."
+          },
+          {
+            "RequirementId": "GAI-PREDEPLOYMENT-TESTING",
+            "Title": "Pre-deployment testing",
+            "Description": "Test harmful content, injection, sensitive data, and bias controls before production.",
+            "MappedComponents": [
+              "InputValidator",
+              "RiskAnalyzer",
+              "OutputGuard"
+            ],
+            "Evidence": [
+              "scripts/smoke-test.ps1",
+              "Configuration/input-validator.json"
+            ],
+            "Status": "PartiallyImplemented",
+            "Notes": "Smoke tests are included; add adversarial evaluation suites for production readiness."
+          },
+          {
+            "RequirementId": "GAI-INCIDENT-DISCLOSURE",
+            "Title": "Incident tracking support",
+            "Description": "Record decisions and model interaction metadata so incidents can be investigated.",
+            "MappedComponents": [
+              "AuditLogger",
+              "AIConnector"
+            ],
+            "Evidence": [
+              "GET /v1/audit/{correlationId}",
+              "GovernanceResponse.Metadata"
+            ],
+            "Status": "PartiallyImplemented",
+            "Notes": "Add durable storage and formal incident notification workflow for production."
+          }
+        ]
+      },
+      {
+        "FrameworkId": "ISO-IEC-42001",
+        "Name": "ISO/IEC 42001 Artificial Intelligence Management System",
+        "Version": "2023",
+        "Type": "AI management system standard",
+        "SourceUrl": "https://www.iso.org/standard/42001",
+        "AlignmentSummary": "The gateway supports an AI management system with policy, risk treatment, operational controls, monitoring evidence, and continual improvement hooks.",
+        "ProjectComponents": [
+          "GovernancePolicy",
+          "RiskRegister",
+          "PolicyEngine",
+          "AuditLogger",
+          "Configuration"
+        ],
+        "Requirements": [
+          {
+            "RequirementId": "AIMS-POLICY",
+            "Title": "AI policy and objectives",
+            "Description": "Define AI governance objectives, ownership, and acceptable risk treatment.",
+            "MappedComponents": [
+              "GovernancePolicy"
+            ],
+            "Evidence": [
+              "Configuration/governance-policy.json"
+            ],
+            "Status": "Implemented",
+            "Notes": "Management approval and periodic review records should be maintained outside the API."
+          },
+          {
+            "RequirementId": "AIMS-RISK",
+            "Title": "AI risk assessment and treatment",
+            "Description": "Identify AI risks and connect them to treatment controls.",
+            "MappedComponents": [
+              "RiskRegister",
+              "InputValidator",
+              "PolicyEngine",
+              "OutputGuard"
+            ],
+            "Evidence": [
+              "Configuration/risk-register.json",
+              "Configuration/policy-engine.json"
+            ],
+            "Status": "Implemented",
+            "Notes": "Add business impact ratings and control owners for audit-grade usage."
+          },
+          {
+            "RequirementId": "AIMS-MONITORING",
+            "Title": "Monitoring and evidence",
+            "Description": "Create evidence that AI requests were checked, decided, and logged.",
+            "MappedComponents": [
+              "AuditLogger",
+              "HealthController"
+            ],
+            "Evidence": [
+              "GET /v1/audit/{correlationId}",
+              "GET /healthz/ready"
+            ],
+            "Status": "PartiallyImplemented",
+            "Notes": "Use persistent logging, dashboards, and periodic review for production."
+          }
+        ]
+      },
+      {
+        "FrameworkId": "OWASP-LLM-2025",
+        "Name": "OWASP Top 10 for LLM and Generative AI Applications",
+        "Version": "2025",
+        "Type": "Application security risk list",
+        "SourceUrl": "https://genai.owasp.org/llm-top-10/",
+        "AlignmentSummary": "The gateway maps OWASP LLM Top 10 risks to prompt validation, response filtering, policy gating, audit logging, and connector configuration.",
+        "ProjectComponents": [
+          "InputValidator",
+          "OutputGuard",
+          "PolicyEngine",
+          "AIConnector",
+          "AuditLogger"
+        ],
+        "Requirements": [
+          {
+            "RequirementId": "LLM01-2025",
+            "Title": "Prompt Injection",
+            "Description": "Detect attempts to override instructions, leak system prompts, or bypass controls.",
+            "MappedComponents": [
+              "InputValidator",
+              "RiskAnalyzer",
+              "PolicyEngine"
+            ],
+            "Evidence": [
+              "Configuration/input-validator.json",
+              "Configuration/policy-engine.json"
+            ],
+            "Status": "Implemented",
+            "Notes": "Add jailbreak test collections for stronger assurance."
+          },
+          {
+            "RequirementId": "LLM02-2025",
+            "Title": "Sensitive Information Disclosure",
+            "Description": "Detect sensitive input and redact sensitive output patterns.",
+            "MappedComponents": [
+              "InputValidator",
+              "OutputGuard"
+            ],
+            "Evidence": [
+              "Configuration/input-validator.json",
+              "Configuration/output-guard.json"
+            ],
+            "Status": "Implemented",
+            "Notes": "Production systems should add DLP, secrets scanning, and retention policy."
+          },
+          {
+            "RequirementId": "LLM03-2025",
+            "Title": "Supply Chain",
+            "Description": "Track provider, model, dependency, and configuration decisions.",
+            "MappedComponents": [
+              "AIConnector",
+              "AuditLogger",
+              "RiskRegister"
+            ],
+            "Evidence": [
+              "Configuration/ai-connector.json",
+              "Configuration/risk-register.json"
+            ],
+            "Status": "PartiallyImplemented",
+            "Notes": "Add dependency scanning, SBOM, provider due diligence, and signed releases."
+          },
+          {
+            "RequirementId": "LLM04-2025",
+            "Title": "Data and Model Poisoning",
+            "Description": "Track risks from training, fine-tuning, and retrieval data manipulation.",
+            "MappedComponents": [
+              "RiskRegister"
+            ],
+            "Evidence": [
+              "Configuration/risk-register.json"
+            ],
+            "Status": "GapTracked",
+            "Notes": "Gateway does not train models; add RAG/source validation if retrieval is introduced."
+          },
+          {
+            "RequirementId": "LLM05-2025",
+            "Title": "Improper Output Handling",
+            "Description": "Sanitize model output before returning it to the caller.",
+            "MappedComponents": [
+              "OutputGuard"
+            ],
+            "Evidence": [
+              "Configuration/output-guard.json"
+            ],
+            "Status": "Implemented",
+            "Notes": "Downstream apps should still encode output by context before rendering or executing it."
+          },
+          {
+            "RequirementId": "LLM06-2025",
+            "Title": "Excessive Agency",
+            "Description": "Prevent model output from taking high-impact actions without policy gates.",
+            "MappedComponents": [
+              "PolicyEngine",
+              "AIConnector"
+            ],
+            "Evidence": [
+              "Configuration/policy-engine.json"
+            ],
+            "Status": "PartiallyImplemented",
+            "Notes": "Current mock connector has no tools. Add scoped tool authorization before agentic actions."
+          },
+          {
+            "RequirementId": "LLM07-2025",
+            "Title": "System Prompt Leakage",
+            "Description": "Detect prompt-leak requests and redact leaked prompt markers in output.",
+            "MappedComponents": [
+              "InputValidator",
+              "OutputGuard"
+            ],
+            "Evidence": [
+              "Configuration/input-validator.json",
+              "Configuration/output-guard.json"
+            ],
+            "Status": "Implemented",
+            "Notes": "Keep system prompts out of logs and externalized client responses."
+          },
+          {
+            "RequirementId": "LLM08-2025",
+            "Title": "Vector and Embedding Weaknesses",
+            "Description": "Track risks from RAG, embeddings, and vector stores.",
+            "MappedComponents": [
+              "RiskRegister"
+            ],
+            "Evidence": [
+              "Configuration/risk-register.json"
+            ],
+            "Status": "GapTracked",
+            "Notes": "Add retrieval authorization, source filtering, and embedding store controls when RAG is added."
+          },
+          {
+            "RequirementId": "LLM09-2025",
+            "Title": "Misinformation",
+            "Description": "Identify where factuality, provenance, and human review controls are needed.",
+            "MappedComponents": [
+              "RiskRegister",
+              "PolicyEngine"
+            ],
+            "Evidence": [
+              "Configuration/risk-register.json",
+              "Configuration/policy-engine.json"
+            ],
+            "Status": "PartiallyImplemented",
+            "Notes": "Add source citation, confidence scoring, and domain-specific review for high-impact advice."
+          },
+          {
+            "RequirementId": "LLM10-2025",
+            "Title": "Unbounded Consumption",
+            "Description": "Limit requests that can create runaway cost or availability issues.",
+            "MappedComponents": [
+              "InputValidator",
+              "RiskRegister"
+            ],
+            "Evidence": [
+              "InputValidator.MaxPromptLength",
+              "Configuration/risk-register.json"
+            ],
+            "Status": "PartiallyImplemented",
+            "Notes": "Add tenant rate limits, quotas, and budget enforcement before production."
+          }
+        ]
+      },
+      {
+        "FrameworkId": "NIST-CSF-2",
+        "Name": "NIST Cybersecurity Framework",
+        "Version": "2.0",
+        "Type": "Cybersecurity risk management framework",
+        "SourceUrl": "https://doi.org/10.6028/NIST.CSWP.29",
+        "AlignmentSummary": "The gateway maps CSF 2.0 governance and cybersecurity outcomes to AI policy, configuration, input/output protection, monitoring/audit, and incident evidence support.",
+        "ProjectComponents": [
+          "GovernancePolicy",
+          "RiskRegister",
+          "InputValidator",
+          "OutputGuard",
+          "AuditLogger",
+          "HealthController"
+        ],
+        "Requirements": [
+          {
+            "RequirementId": "CSF-GV",
+            "Title": "Govern",
+            "Description": "Establish cybersecurity and AI risk strategy, expectations, and policy.",
+            "MappedComponents": [
+              "GovernancePolicy",
+              "ComplianceFrameworkCatalog"
+            ],
+            "Evidence": [
+              "Configuration/governance-policy.json",
+              "Configuration/compliance-frameworks.json"
+            ],
+            "Status": "Implemented",
+            "Notes": "Enterprise security policy should own final approval."
+          },
+          {
+            "RequirementId": "CSF-ID",
+            "Title": "Identify",
+            "Description": "Identify AI security risks, assets, data, providers, and dependencies.",
+            "MappedComponents": [
+              "RiskRegister",
+              "AIConnector"
+            ],
+            "Evidence": [
+              "Configuration/risk-register.json",
+              "Configuration/ai-connector.json"
+            ],
+            "Status": "PartiallyImplemented",
+            "Notes": "Add SBOM and asset inventory for production."
+          },
+          {
+            "RequirementId": "CSF-PR",
+            "Title": "Protect",
+            "Description": "Protect the system through validation, policy gates, and output filtering.",
+            "MappedComponents": [
+              "InputValidator",
+              "PolicyEngine",
+              "OutputGuard"
+            ],
+            "Evidence": [
+              "POST /api/process",
+              "Configuration/input-validator.json",
+              "Configuration/output-guard.json"
+            ],
+            "Status": "Implemented",
+            "Notes": "Add authentication, authorization, and tenant rate limits."
+          },
+          {
+            "RequirementId": "CSF-DE",
+            "Title": "Detect",
+            "Description": "Detect governance decisions and suspicious usage patterns through logs.",
+            "MappedComponents": [
+              "AuditLogger",
+              "HealthController"
+            ],
+            "Evidence": [
+              "GET /v1/audit/{correlationId}",
+              "GET /healthz/ready"
+            ],
+            "Status": "PartiallyImplemented",
+            "Notes": "Add SIEM export and alerting for production."
+          },
+          {
+            "RequirementId": "CSF-RS-RC",
+            "Title": "Respond and Recover",
+            "Description": "Support incident investigation and recovery by preserving correlation-level evidence.",
+            "MappedComponents": [
+              "AuditLogger"
+            ],
+            "Evidence": [
+              "GET /v1/audit/{correlationId}"
+            ],
+            "Status": "GapTracked",
+            "Notes": "Add incident runbooks, durable audit storage, backup, and recovery workflow."
+          }
+        ]
+      },
+      {
+        "FrameworkId": "EU-AI-ACT-GPAI",
+        "Name": "EU AI Act general-purpose AI model obligations",
+        "Version": "Regulation (EU) 2024/1689 and 2025 Commission guidance",
+        "Type": "Regulatory obligations for GPAI model providers",
+        "SourceUrl": "https://digital-strategy.ec.europa.eu/en/factpages/general-purpose-ai-obligations-under-ai-act",
+        "AlignmentSummary": "The gateway supports evidence collection and downstream governance. It does not by itself satisfy GPAI provider obligations such as technical documentation, copyright policy, training-content summaries, systemic risk assessment, or incident reporting.",
+        "ProjectComponents": [
+          "ComplianceFrameworkCatalog",
+          "GovernancePolicy",
+          "RiskRegister",
+          "AIConnector",
+          "AuditLogger"
+        ],
+        "Requirements": [
+          {
+            "RequirementId": "GPAI-TECH-DOCS",
+            "Title": "Technical documentation",
+            "Description": "Maintain technical model documentation and downstream provider information where provider obligations apply.",
+            "MappedComponents": [
+              "AIConnector",
+              "ComplianceFrameworkCatalog"
+            ],
+            "Evidence": [
+              "Configuration/ai-connector.json",
+              "Configuration/compliance-frameworks.json"
+            ],
+            "Status": "GapTracked",
+            "Notes": "Add external model documentation, architecture, capabilities, limitations, and integration information."
+          },
+          {
+            "RequirementId": "GPAI-COPYRIGHT",
+            "Title": "Copyright policy",
+            "Description": "Maintain a policy to comply with Union copyright law where provider obligations apply.",
+            "MappedComponents": [
+              "GovernancePolicy"
+            ],
+            "Evidence": [
+              "Configuration/governance-policy.json"
+            ],
+            "Status": "GapTracked",
+            "Notes": "Gateway can reference the policy, but legal policy content must be created and approved separately."
+          },
+          {
+            "RequirementId": "GPAI-TRAINING-SUMMARY",
+            "Title": "Training content summary",
+            "Description": "Publish a sufficiently detailed summary of training content where provider obligations apply.",
+            "MappedComponents": [
+              "ComplianceFrameworkCatalog"
+            ],
+            "Evidence": [
+              "Configuration/compliance-frameworks.json"
+            ],
+            "Status": "GapTracked",
+            "Notes": "Not applicable when the gateway only calls a third-party model and does not train or publish a GPAI model."
+          },
+          {
+            "RequirementId": "GPAI-SYSTEMIC-RISK",
+            "Title": "Systemic risk obligations",
+            "Description": "For GPAI models with systemic risk, support evaluation, mitigation, incident reporting, and cybersecurity protection evidence.",
+            "MappedComponents": [
+              "RiskRegister",
+              "AuditLogger",
+              "HealthController"
+            ],
+            "Evidence": [
+              "Configuration/risk-register.json",
+              "GET /v1/audit/{correlationId}",
+              "GET /healthz/ready"
+            ],
+            "Status": "GapTracked",
+            "Notes": "If you become a GPAI provider, add model evaluations, serious incident reporting, cybersecurity controls, and AI Office reporting workflow."
+          }
+        ]
+      }
+    ]
+  }
+}

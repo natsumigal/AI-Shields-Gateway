@@ -1,0 +1,46 @@
+{
+  "GovernancePolicy": {
+    "Name": "AI Governance Gateway Policy",
+    "Version": "1.0",
+    "Owner": "AI Governance Team",
+    "FrameworkProfile": "NIST AI RMF 1.0, NIST AI 600-1, ISO/IEC 42001:2023, OWASP LLM Top 10 2025, NIST CSF 2.0, and EU AI Act GPAI support mapping.",
+    "RiskAppetite": "Allow low-risk AI requests, route medium/high-risk requests to human review, and block critical harmful, illegal, cyber-abuse, or globally banned content before model invocation.",
+    "Controls": [
+      {
+        "ControlId": "GOV-001",
+        "Function": "Govern",
+        "Component": "GovernancePolicy",
+        "Description": "Policy, ownership, risk appetite, and framework mappings are externalized in JSON configuration.",
+        "Evidence": "Configuration/governance-policy.json and Configuration/compliance-frameworks.json"
+      },
+      {
+        "ControlId": "MAP-001",
+        "Function": "Map",
+        "Component": "RiskRegister",
+        "Description": "AI risks are categorized and connected to relevant framework references.",
+        "Evidence": "Configuration/risk-register.json"
+      },
+      {
+        "ControlId": "MEASURE-001",
+        "Function": "Measure",
+        "Component": "InputValidator, RiskAnalyzer, OutputGuard",
+        "Description": "Requests and responses are checked for harmful, biased, sensitive, prompt-injection, cyber-abuse, and regulated categories.",
+        "Evidence": "Configuration/input-validator.json and Configuration/output-guard.json"
+      },
+      {
+        "ControlId": "MANAGE-001",
+        "Function": "Manage",
+        "Component": "PolicyEngine",
+        "Description": "Policy thresholds decide allow, block, or human review before AI model access.",
+        "Evidence": "Configuration/policy-engine.json"
+      },
+      {
+        "ControlId": "GOV-002",
+        "Function": "Govern",
+        "Component": "AuditLogger",
+        "Description": "Every pipeline decision is logged by correlation id for traceability and review.",
+        "Evidence": "GET /v1/audit/{correlationId}"
+      }
+    ]
+  }
+}

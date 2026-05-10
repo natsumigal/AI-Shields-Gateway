@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/ai-governance/input-validator.schema.json",
+  "title": "AI Governance Input Validator",
+  "type": "object",
+  "required": ["InputValidator"],
+  "properties": {
+    "InputValidator": {
+      "type": "object",
+      "required": ["MaxPromptLength", "Categories"],
+      "properties": {
+        "MaxPromptLength": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "Categories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["Category", "Code", "Severity", "Message"],
+            "properties": {
+              "Category": { "type": "string", "minLength": 1 },
+              "Code": { "type": "string", "minLength": 1 },
+              "Severity": {
+                "type": "string",
+                "enum": ["Info", "Warning", "Error"]
+              },
+              "Message": { "type": "string" },
+              "Terms": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "Patterns": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "RedactMatches": { "type": "boolean" },
+              "ExposeEvidence": { "type": "boolean" },
+              "Replacement": { "type": "string" },
+              "RiskLevel": {
+                "type": "string",
+                "enum": ["Low", "Medium", "High", "Critical"]
+              },
+              "RiskScore": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "RiskReason": {
+                "type": ["string", "null"]
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

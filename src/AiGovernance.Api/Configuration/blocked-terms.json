@@ -1,0 +1,10 @@
+{
+  "InputValidator": {
+    "BlockedTerms": [
+      "credential dump",
+      "exfiltrate",
+      "malware",
+      "steal password"
+    ]
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "InputValidator": {
+    "MaxPromptLength": 4000,
+    "Categories": [
+      {
+        "Category": "HarmfulContent",
+        "Description": "Self-harm, violence, or instructions that can physically harm a person.",
+        "Severity": "Error",
+        "RiskLevel": "Critical",
+        "RiskScore": 1.0,
+        "Action": "Block",
+        "Terms": [
+          "harm myself",
+          "hurt myself",
+          "kill myself",
+          "suicide",
+          "self harm",
+          "make a weapon"
+        ]
+      },
+      {
+        "Category": "CyberAbuse",
+        "Description": "Requests for malware, credential theft, exfiltration, or unauthorized access.",
+        "Severity": "Error",
+        "RiskLevel": "Critical",
+        "RiskScore": 0.96,
+        "Action": "Block",
+        "Terms": [
+          "write malware",
+          "bypass login",
+          "credential dump",
+          "steal password",
+          "ransomware"
+        ]
+      },
+      {
+        "Category": "PromptInjection",
+        "Description": "Attempts to override system instructions, leak hidden prompts, or bypass safety policy.",
+        "Severity": "Warning",
+        "RiskLevel": "High",
+        "RiskScore": 0.78,
+        "Action": "HumanReview",
+        "Terms": [
+          "ignore previous instructions",
+          "reveal your system prompt",
+          "developer message",
+          "bypass policy",
+          "jailbreak"
+        ]
+      },
+      {
+        "Category": "BiasDiscrimination",
+        "Description": "Protected-class discrimination, profiling, or exclusionary recommendations.",
+        "Severity": "Warning",
+        "RiskLevel": "High",
+        "RiskScore": 0.74,
+        "Action": "HumanReview",
+        "Terms": [
+          "rank candidates by race",
+          "avoid hiring women",
+          "infer religion",
+          "infer ethnicity",
+          "protected class"
+        ]
+      },
+      {
+        "Category": "SensitiveInfo",
+        "Description": "Personal data, secrets, financial data, credentials, or regulated confidential information.",
+        "Severity": "Warning",
+        "RiskLevel": "Medium",
+        "RiskScore": 0.58,
+        "Action": "HumanReview",
+        "Terms": [
+          "social security number",
+          "api key",
+          "password",
+          "credit card",
+          "patient record"
+        ],
+        "RedactionPatterns": [
+          "\\b\\d{3}-\\d{2}-\\d{4}\\b",
+          "\\b(?:\\d[ -]*?){13,16}\\b"
+        ]
+      },
+      {
+        "Category": "RegulatedAdvice",
+        "Description": "Legal, medical, financial, or employment advice that may require professional review.",
+        "Severity": "Warning",
+        "RiskLevel": "Medium",
+        "RiskScore": 0.5,
+        "Action": "HumanReview",
+        "Terms": [
+          "diagnose me",
+          "legal advice",
+          "investment recommendation",
+          "fire this employee",
+          "medical treatment"
+        ]
+      },
+      {
+        "Category": "IllegalActivity",
+        "Description": "Requests to facilitate illegal activity, evasion, fraud, or abuse.",
+        "Severity": "Error",
+        "RiskLevel": "Critical",
+        "RiskScore": 0.94,
+        "Action": "Block",
+        "Terms": [
+          "commit fraud",
+          "evade taxes",
+          "fake passport",
+          "launder money",
+          "shoplift"
+        ]
+      }
+    ]
+  }
+}

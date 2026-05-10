@@ -1,0 +1,24 @@
+{
+  "PolicyEngine": {
+    "HumanReviewThreshold": 0.65,
+    "BlockThreshold": 0.9,
+    "HumanReviewCategories": [
+      "PromptInjection",
+      "BiasDiscrimination",
+      "SensitiveInfo",
+      "RegulatedAdvice"
+    ],
+    "BlockCategories": [
+      "BlockedTerm",
+      "HarmfulContent",
+      "CyberAbuse",
+      "IllegalActivity"
+    ],
+    "AllowedPurposes": [
+      "mock-api-test",
+      "customer-support",
+      "knowledge-assistant",
+      "internal-productivity"
+    ]
+  }
+}

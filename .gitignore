@@ -1,0 +1,16 @@
+bin/
+obj/
+.artifacts/
+TestResults/
+.vs/
+.vscode/
+*.user
+*.suo
+*.log
+.env
+.env.*
+!.env.example
+api-server-current.log
+api-server-current.err.log
+coverage/
+*.trx
