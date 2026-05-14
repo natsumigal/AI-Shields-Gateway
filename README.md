@@ -347,16 +347,4 @@ This project includes traceability mappings for:
 
 This is practical control mapping, not certification and not legal advice. See `docs/public-open-source/framework-alignment.md`.
 
-## Reference Implementation
 
-The project goal is explained in `docs/public-open-source/reference-implementation.md`.
-
-Short version: keep the AI governance flow simple and explainable now, while preserving clean boundaries for production upgrades later.
-
-## Agentic Governance
-
-The optional agentic path uses `Microsoft.AgentGovernance` for tool-call governance. See `docs/public-open-source/agentic-governance.md`.
-
-Use `/api/process` for normal prompt-to-model governance.
-
-Use `/api/agents/tool-evaluate` when an agent is about to run a tool such as file read/write, web search, HTTP request, email send, shell execution, or database action.
