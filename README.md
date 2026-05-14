@@ -345,6 +345,6 @@ This project includes traceability mappings for:
 - NIST CSF 2.0
 - EU AI Act GPAI obligations
 
-This is practical control mapping, not certification and not legal advice. See `docs/public-open-source/framework-alignment.md`.
+This is practical control mapping, not certification and not legal advice. See `framework-alignment.md`.
 
 
