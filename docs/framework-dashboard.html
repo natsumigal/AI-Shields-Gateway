@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI Governance — Framework Mapping Dashboard</title>
+<style>
+  :root{
+    --bg:#f4f6fa; --panel:#ffffff; --ink:#1c2432; --mute:#697488; --line:#e2e7f0;
+    --chip:#eef2f8; --shadow:0 1px 3px rgba(20,30,50,.06),0 6px 20px rgba(20,30,50,.05);
+    --green:#2e9e57; --greenbg:#e7f6ee; --amber:#d79413; --amberbg:#fdf3df; --red:#d64545; --redbg:#fbe9e9;
+  }
+  html[data-theme="dark"]{
+    --bg:#0f1420; --panel:#171e2c; --ink:#e6ecf6; --mute:#95a1b5; --line:#26314a;
+    --chip:#212b3f; --shadow:0 1px 3px rgba(0,0,0,.4);
+    --greenbg:#123122; --amberbg:#3a2c0e; --redbg:#3a1717;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.45;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1180px;margin:0 auto;padding:24px 20px 60px}
+  header.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:6px}
+  h1{font-size:22px;margin:0 0 4px}
+  .sub{color:var(--mute);font-size:13px;max-width:720px}
+  .src{color:var(--mute);font-size:12px;margin-top:4px}
+  .src code{background:var(--chip);padding:1px 6px;border-radius:5px;font-size:11.5px}
+  button.theme{background:var(--panel);border:1px solid var(--line);color:var(--ink);
+    border-radius:9px;padding:8px 12px;cursor:pointer;font-size:13px;box-shadow:var(--shadow)}
+
+  /* KPI cards */
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:20px 0 8px}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow)}
+  .kpi .n{font-size:28px;font-weight:700;line-height:1}
+  .kpi .l{color:var(--mute);font-size:12px;margin-top:6px;text-transform:uppercase;letter-spacing:.04em}
+  .kpi.green .n{color:var(--green)} .kpi.amber .n{color:var(--amber)} .kpi.red .n{color:var(--red)}
+
+  /* overall coverage bar */
+  .coverage{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow);margin:12px 0 8px}
+  .coverage .head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+  .coverage .pct{font-size:15px;font-weight:700}
+  .bar{height:16px;border-radius:9px;overflow:hidden;display:flex;background:var(--chip)}
+  .bar>span{display:block;height:100%}
+  .bar .s-impl{background:var(--green)} .bar .s-part{background:var(--amber)} .bar .s-gap{background:var(--red)}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:12px;color:var(--mute)}
+  .legend b{color:var(--ink)}
+  .dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+
+  /* controls */
+  .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:20px 0 14px}
+  .controls input[type=search]{flex:1;min-width:200px;background:var(--panel);border:1px solid var(--line);
+    color:var(--ink);border-radius:10px;padding:10px 12px;font-size:14px;box-shadow:var(--shadow)}
+  .seg{display:flex;gap:6px;flex-wrap:wrap}
+  .seg button, .fwfilter button{background:var(--panel);border:1px solid var(--line);color:var(--mute);
+    border-radius:999px;padding:7px 13px;cursor:pointer;font-size:12.5px;font-weight:600}
+  .seg button.active{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+  .fwfilter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+  .fwfilter button{display:flex;align-items:center;gap:7px}
+  .fwfilter button.active{color:var(--ink);border-width:2px}
+  .fwfilter .fwdot{width:9px;height:9px;border-radius:50%}
+
+  /* framework section */
+  .fw{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);
+    margin-bottom:18px;overflow:hidden}
+  .fw-head{padding:16px 18px;border-left:6px solid var(--fw)}
+  .fw-title{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .fw-title h2{font-size:17px;margin:0}
+  .fw-title .ver{font-size:11.5px;color:var(--mute);background:var(--chip);padding:2px 8px;border-radius:6px}
+  .fw-title a{margin-left:auto;font-size:12px;color:var(--fw);text-decoration:none;white-space:nowrap}
+  .fw-sum{color:var(--mute);font-size:13px;margin:8px 0 12px}
+  .fw-mini{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .fw-mini .bar{flex:1;min-width:160px;height:10px}
+  .fw-mini .counts{font-size:12px;color:var(--mute)}
+  .comp-row{margin-top:10px;font-size:12px;color:var(--mute)}
+  .chip{display:inline-block;background:var(--chip);border-radius:6px;padding:2px 8px;margin:2px 4px 2px 0;font-size:11.5px;color:var(--ink)}
+  .chip.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11px}
+
+  /* requirement rows */
+  .reqs{padding:4px 18px 14px}
+  .req{border-top:1px solid var(--line);padding:14px 0}
+  .req:first-child{border-top:none}
+  .req-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .req-id{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11px;color:var(--mute);
+    background:var(--chip);padding:2px 7px;border-radius:5px}
+  .req-title{font-weight:700;font-size:14px}
+  .badge{margin-left:auto;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;white-space:nowrap}
+  .badge.impl{background:var(--greenbg);color:var(--green)}
+  .badge.part{background:var(--amberbg);color:var(--amber)}
+  .badge.gap{background:var(--redbg);color:var(--red)}
+  .req-desc{color:var(--mute);font-size:13px;margin:6px 0 8px}
+  .req-meta{font-size:11.5px;color:var(--mute);margin-top:6px}
+  .req-meta .lab{font-weight:700;color:var(--ink);margin-right:4px}
+  .req-notes{font-size:12px;color:var(--mute);font-style:italic;margin-top:8px;padding-left:10px;border-left:2px solid var(--line)}
+  .empty{text-align:center;color:var(--mute);padding:40px;font-size:14px}
+  footer{color:var(--mute);font-size:11.5px;text-align:center;margin-top:30px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>AI Governance — Framework Mapping Dashboard</h1>
+      <div class="sub" id="scope"></div>
+      <div class="src">Source: <code>GET /v1/governance/frameworks</code> · <span id="owner"></span> · version <span id="ver"></span></div>
+    </div>
+    <button class="theme" id="themeBtn">🌙 Dark</button>
+  </header>
+
+  <section class="kpis" id="kpis"></section>
+
+  <section class="coverage">
+    <div class="head"><strong>Overall control coverage</strong><span class="pct" id="covPct"></span></div>
+    <div class="bar" id="covBar"></div>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--green)"></span><b id="cImpl">0</b> Implemented</span>
+      <span><span class="dot" style="background:var(--amber)"></span><b id="cPart">0</b> Partial</span>
+      <span><span class="dot" style="background:var(--red)"></span><b id="cGap">0</b> Gap</span>
+      <span style="margin-left:auto">Coverage weights Implemented = 1.0, Partial = 0.5, Gap = 0.</span>
+    </div>
+  </section>
+
+  <div class="controls">
+    <input type="search" id="search" placeholder="Search requirements, components, evidence…" />
+    <div class="seg" id="statusSeg">
+      <button data-s="all" class="active">All</button>
+      <button data-s="Implemented">Implemented</button>
+      <button data-s="Partial">Partial</button>
+      <button data-s="Gap">Gap</button>
+    </div>
+  </div>
+  <div class="fwfilter" id="fwFilter"></div>
+
+  <div id="list"></div>
+
+  <footer>
+    Practical control mapping — governance evidence, not a certification or legal opinion.
+    Rules are JSON-driven and hot-reloaded; confirm current values in the live catalog.
+  </footer>
+</div>
+
+<script>
+/* ---------- embedded API data (GET /v1/governance/frameworks) ---------- */
+const DATA = {"version":"1.0","owner":"AI Governance Team","scope":"Traceability mapping for the AI governance gateway. This supports governance evidence; it is not a certification or legal opinion.","frameworks":[
+{"frameworkId":"NIST-AI-RMF","name":"NIST AI Risk Management Framework","version":"1.0","type":"Voluntary AI risk management framework","sourceUrl":"https://www.nist.gov/itl/ai-risk-management-framework","alignmentSummary":"The gateway maps to the AI RMF Govern, Map, Measure, and Manage functions through policy ownership, risk register, validation, risk scoring, policy decisions, output controls, and audit evidence.","projectComponents":["GovernancePolicy","RiskRegister","InputValidator","RiskAnalyzer","PolicyEngine","OutputGuard","AuditLogger"],"requirements":[
+ {"requirementId":"AI-RMF-GOVERN","title":"Govern AI risk","description":"Establish policy, accountability, risk appetite, and traceable controls for AI usage.","mappedComponents":["GovernancePolicy","ComplianceFrameworkCatalog","AuditLogger"],"evidence":["Configuration/governance-policy.json","Configuration/compliance-frameworks.json","GET /v1/audit/{correlationId}"],"status":"Implemented","notes":"Organizational approvals and ownership reviews still need to happen outside the codebase."},
+ {"requirementId":"AI-RMF-MAP","title":"Map AI context and risks","description":"Identify use context, risk categories, affected parties, and risk sources.","mappedComponents":["RiskRegister","ApiProcessRequest","InputValidator"],"evidence":["Configuration/risk-register.json","POST /api/process request metadata"],"status":"Implemented","notes":"Use case inventory and stakeholder impact assessment should be added for production."},
+ {"requirementId":"AI-RMF-MEASURE","title":"Measure AI risk","description":"Analyze prompts and responses for risk signals, severity, and control outcomes.","mappedComponents":["InputValidator","RiskAnalyzer","OutputGuard"],"evidence":["Configuration/input-validator.json","Configuration/risk-engine.json","Configuration/output-guard.json"],"status":"Implemented","notes":"Add quantitative evaluation sets and model-specific test results before claiming mature measurement."},
+ {"requirementId":"AI-RMF-MANAGE","title":"Manage AI risk","description":"Apply controls that allow, block, or route requests to human review.","mappedComponents":["PolicyEngine","AuditLogger"],"evidence":["Configuration/policy-engine.json","POST /api/process decision","GET /v1/audit/{correlationId}"],"status":"Implemented","notes":"Incident playbooks and exception workflows should be connected in a production deployment."}
+]},
+{"frameworkId":"NIST-AI-600-1","name":"NIST AI 600-1 Generative AI Profile","version":"July 2024","type":"Generative AI profile for NIST AI RMF","sourceUrl":"https://doi.org/10.6028/NIST.AI.600-1","alignmentSummary":"The gateway supports generative AI risk management by detecting prompt injection, harmful requests, sensitive information, bias, improper output handling, and audit-relevant model metadata.","projectComponents":["InputValidator","RiskAnalyzer","PolicyEngine","AIConnector","OutputGuard","AuditLogger"],"requirements":[
+ {"requirementId":"GAI-GOVERNANCE","title":"Govern generative AI use","description":"Maintain controls, responsibilities, and traceability for generative AI usage.","mappedComponents":["GovernancePolicy","AuditLogger"],"evidence":["Configuration/governance-policy.json","GET /v1/audit/{correlationId}"],"status":"Implemented","notes":"Model cards, acceptable use policy, and deployment approvals should be attached separately."},
+ {"requirementId":"GAI-PREDEPLOYMENT-TESTING","title":"Pre-deployment testing","description":"Test harmful content, injection, sensitive data, and bias controls before production.","mappedComponents":["InputValidator","RiskAnalyzer","OutputGuard"],"evidence":["scripts/smoke-test.ps1","Configuration/input-validator.json"],"status":"PartiallyImplemented","notes":"Smoke tests are included; add adversarial evaluation suites for production readiness."},
+ {"requirementId":"GAI-INCIDENT-DISCLOSURE","title":"Incident tracking support","description":"Record decisions and model interaction metadata so incidents can be investigated.","mappedComponents":["AuditLogger","AIConnector"],"evidence":["GET /v1/audit/{correlationId}","GovernanceResponse.Metadata"],"status":"PartiallyImplemented","notes":"Add durable storage and formal incident notification workflow for production."}
+]},
+{"frameworkId":"ISO-IEC-42001","name":"ISO/IEC 42001 Artificial Intelligence Management System","version":"2023","type":"AI management system standard","sourceUrl":"https://www.iso.org/standard/42001","alignmentSummary":"The gateway supports an AI management system with policy, risk treatment, operational controls, monitoring evidence, and continual improvement hooks.","projectComponents":["GovernancePolicy","RiskRegister","PolicyEngine","AuditLogger","Configuration"],"requirements":[
+ {"requirementId":"AIMS-POLICY","title":"AI policy and objectives","description":"Define AI governance objectives, ownership, and acceptable risk treatment.","mappedComponents":["GovernancePolicy"],"evidence":["Configuration/governance-policy.json"],"status":"Implemented","notes":"Management approval and periodic review records should be maintained outside the API."},
+ {"requirementId":"AIMS-RISK","title":"AI risk assessment and treatment","description":"Identify AI risks and connect them to treatment controls.","mappedComponents":["RiskRegister","InputValidator","PolicyEngine","OutputGuard"],"evidence":["Configuration/risk-register.json","Configuration/policy-engine.json"],"status":"Implemented","notes":"Add business impact ratings and control owners for audit-grade usage."},
+ {"requirementId":"AIMS-MONITORING","title":"Monitoring and evidence","description":"Create evidence that AI requests were checked, decided, and logged.","mappedComponents":["AuditLogger","HealthController"],"evidence":["GET /v1/audit/{correlationId}","GET /healthz/ready"],"status":"PartiallyImplemented","notes":"Use persistent logging, dashboards, and periodic review for production."}
+]},
+{"frameworkId":"OWASP-LLM-2025","name":"OWASP Top 10 for LLM and Generative AI Applications","version":"2025","type":"Application security risk list","sourceUrl":"https://genai.owasp.org/llm-top-10/","alignmentSummary":"The gateway maps OWASP LLM Top 10 risks to prompt validation, response filtering, policy gating, audit logging, and connector configuration.","projectComponents":["InputValidator","OutputGuard","PolicyEngine","AIConnector","AuditLogger"],"requirements":[
+ {"requirementId":"LLM01-2025","title":"Prompt Injection","description":"Detect attempts to override instructions, leak system prompts, or bypass controls.","mappedComponents":["InputValidator","RiskAnalyzer","PolicyEngine"],"evidence":["Configuration/input-validator.json","Configuration/policy-engine.json"],"status":"Implemented","notes":"Add jailbreak test collections for stronger assurance."},
+ {"requirementId":"LLM02-2025","title":"Sensitive Information Disclosure","description":"Detect sensitive input and redact sensitive output patterns.","mappedComponents":["InputValidator","OutputGuard"],"evidence":["Configuration/input-validator.json","Configuration/output-guard.json"],"status":"Implemented","notes":"Production systems should add DLP, secrets scanning, and retention policy."},
+ {"requirementId":"LLM03-2025","title":"Supply Chain","description":"Track provider, model, dependency, and configuration decisions.","mappedComponents":["AIConnector","AuditLogger","RiskRegister"],"evidence":["Configuration/ai-connector.json","Configuration/risk-register.json"],"status":"PartiallyImplemented","notes":"Add dependency scanning, SBOM, provider due diligence, and signed releases."},
+ {"requirementId":"LLM04-2025","title":"Data and Model Poisoning","description":"Track risks from training, fine-tuning, and retrieval data manipulation.","mappedComponents":["RiskRegister"],"evidence":["Configuration/risk-register.json"],"status":"GapTracked","notes":"Gateway does not train models; add RAG/source validation if retrieval is introduced."},
+ {"requirementId":"LLM05-2025","title":"Improper Output Handling","description":"Sanitize model output before returning it to the caller.","mappedComponents":["OutputGuard"],"evidence":["Configuration/output-guard.json"],"status":"Implemented","notes":"Downstream apps should still encode output by context before rendering or executing it."},
+ {"requirementId":"LLM06-2025","title":"Excessive Agency","description":"Prevent model output from taking high-impact actions without policy gates.","mappedComponents":["PolicyEngine","AIConnector"],"evidence":["Configuration/policy-engine.json"],"status":"PartiallyImplemented","notes":"Current mock connector has no tools. Add scoped tool authorization before agentic actions."},
+ {"requirementId":"LLM07-2025","title":"System Prompt Leakage","description":"Detect prompt-leak requests and redact leaked prompt markers in output.","mappedComponents":["InputValidator","OutputGuard"],"evidence":["Configuration/input-validator.json","Configuration/output-guard.json"],"status":"Implemented","notes":"Keep system prompts out of logs and externalized client responses."},
+ {"requirementId":"LLM08-2025","title":"Vector and Embedding Weaknesses","description":"Track risks from RAG, embeddings, and vector stores.","mappedComponents":["RiskRegister"],"evidence":["Configuration/risk-register.json"],"status":"GapTracked","notes":"Add retrieval authorization, source filtering, and embedding store controls when RAG is added."},
+ {"requirementId":"LLM09-2025","title":"Misinformation","description":"Identify where factuality, provenance, and human review controls are needed.","mappedComponents":["RiskRegister","PolicyEngine"],"evidence":["Configuration/risk-register.json","Configuration/policy-engine.json"],"status":"PartiallyImplemented","notes":"Add source citation, confidence scoring, and domain-specific review for high-impact advice."},
+ {"requirementId":"LLM10-2025","title":"Unbounded Consumption","description":"Limit requests that can create runaway cost or availability issues.","mappedComponents":["InputValidator","RiskRegister"],"evidence":["InputValidator.MaxPromptLength","Configuration/risk-register.json"],"status":"PartiallyImplemented","notes":"Add tenant rate limits, quotas, and budget enforcement before production."}
+]},
+{"frameworkId":"NIST-CSF-2","name":"NIST Cybersecurity Framework","version":"2.0","type":"Cybersecurity risk management framework","sourceUrl":"https://doi.org/10.6028/NIST.CSWP.29","alignmentSummary":"The gateway maps CSF 2.0 governance and cybersecurity outcomes to AI policy, configuration, input/output protection, monitoring/audit, and incident evidence support.","projectComponents":["GovernancePolicy","RiskRegister","InputValidator","OutputGuard","AuditLogger","HealthController"],"requirements":[
+ {"requirementId":"CSF-GV","title":"Govern","description":"Establish cybersecurity and AI risk strategy, expectations, and policy.","mappedComponents":["GovernancePolicy","ComplianceFrameworkCatalog"],"evidence":["Configuration/governance-policy.json","Configuration/compliance-frameworks.json"],"status":"Implemented","notes":"Enterprise security policy should own final approval."},
+ {"requirementId":"CSF-ID","title":"Identify","description":"Identify AI security risks, assets, data, providers, and dependencies.","mappedComponents":["RiskRegister","AIConnector"],"evidence":["Configuration/risk-register.json","Configuration/ai-connector.json"],"status":"PartiallyImplemented","notes":"Add SBOM and asset inventory for production."},
+ {"requirementId":"CSF-PR","title":"Protect","description":"Protect the system through validation, policy gates, and output filtering.","mappedComponents":["InputValidator","PolicyEngine","OutputGuard"],"evidence":["POST /api/process","Configuration/input-validator.json","Configuration/output-guard.json"],"status":"Implemented","notes":"Add authentication, authorization, and tenant rate limits."},
+ {"requirementId":"CSF-DE","title":"Detect","description":"Detect governance decisions and suspicious usage patterns through logs.","mappedComponents":["AuditLogger","HealthController"],"evidence":["GET /v1/audit/{correlationId}","GET /healthz/ready"],"status":"PartiallyImplemented","notes":"Add SIEM export and alerting for production."},
+ {"requirementId":"CSF-RS-RC","title":"Respond and Recover","description":"Support incident investigation and recovery by preserving correlation-level evidence.","mappedComponents":["AuditLogger"],"evidence":["GET /v1/audit/{correlationId}"],"status":"GapTracked","notes":"Add incident runbooks, durable audit storage, backup, and recovery workflow."}
+]},
+{"frameworkId":"EU-AI-ACT-GPAI","name":"EU AI Act general-purpose AI model obligations","version":"Regulation (EU) 2024/1689 and 2025 Commission guidance","type":"Regulatory obligations for GPAI model providers","sourceUrl":"https://digital-strategy.ec.europa.eu/en/factpages/general-purpose-ai-obligations-under-ai-act","alignmentSummary":"The gateway supports evidence collection and downstream governance. It does not by itself satisfy GPAI provider obligations such as technical documentation, copyright policy, training-content summaries, systemic risk assessment, or incident reporting.","projectComponents":["ComplianceFrameworkCatalog","GovernancePolicy","RiskRegister","AIConnector","AuditLogger"],"requirements":[
+ {"requirementId":"GPAI-TECH-DOCS","title":"Technical documentation","description":"Maintain technical model documentation and downstream provider information where provider obligations apply.","mappedComponents":["AIConnector","ComplianceFrameworkCatalog"],"evidence":["Configuration/ai-connector.json","Configuration/compliance-frameworks.json"],"status":"GapTracked","notes":"Add external model documentation, architecture, capabilities, limitations, and integration information."},
+ {"requirementId":"GPAI-COPYRIGHT","title":"Copyright policy","description":"Maintain a policy to comply with Union copyright law where provider obligations apply.","mappedComponents":["GovernancePolicy"],"evidence":["Configuration/governance-policy.json"],"status":"GapTracked","notes":"Gateway can reference the policy, but legal policy content must be created and approved separately."},
+ {"requirementId":"GPAI-TRAINING-SUMMARY","title":"Training content summary","description":"Publish a sufficiently detailed summary of training content where provider obligations apply.","mappedComponents":["ComplianceFrameworkCatalog"],"evidence":["Configuration/compliance-frameworks.json"],"status":"GapTracked","notes":"Not applicable when the gateway only calls a third-party model and does not train or publish a GPAI model."},
+ {"requirementId":"GPAI-SYSTEMIC-RISK","title":"Systemic risk obligations","description":"For GPAI models with systemic risk, support evaluation, mitigation, incident reporting, and cybersecurity protection evidence.","mappedComponents":["RiskRegister","AuditLogger","HealthController"],"evidence":["Configuration/risk-register.json","GET /v1/audit/{correlationId}","GET /healthz/ready"],"status":"GapTracked","notes":"If you become a GPAI provider, add model evaluations, serious incident reporting, cybersecurity controls, and AI Office reporting workflow."}
+]}
+]};
+
+/* ---------- helpers ---------- */
+const FW_COLOR = {
+  "NIST-AI-RMF":"#1e88e5","NIST-AI-600-1":"#00897b","ISO-IEC-42001":"#8d6e63",
+  "OWASP-LLM-2025":"#fb8c00","NIST-CSF-2":"#5c6bc0","EU-AI-ACT-GPAI":"#78909c"
+};
+const norm = s => s==="Implemented" ? "Implemented" : s==="PartiallyImplemented" ? "Partial" : "Gap";
+const badgeClass = s => ({Implemented:"impl",Partial:"part",Gap:"gap"})[s];
+const weight = s => ({Implemented:1,Partial:0.5,Gap:0})[s];
+const esc = s => String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+
+let state = { status:"all", fw:"all", q:"" };
+
+/* ---------- header + KPIs ---------- */
+document.getElementById("scope").textContent = DATA.scope;
+document.getElementById("owner").textContent = DATA.owner;
+document.getElementById("ver").textContent = DATA.version;
+
+const allReqs = DATA.frameworks.flatMap(f=>f.requirements.map(r=>({...r,_s:norm(r.status)})));
+const counts = {Implemented:0,Partial:0,Gap:0};
+allReqs.forEach(r=>counts[r._s]++);
+const total = allReqs.length;
+const cov = Math.round(100 * allReqs.reduce((a,r)=>a+weight(r._s),0)/total);
+
+document.getElementById("kpis").innerHTML = [
+  {n:DATA.frameworks.length,l:"Frameworks",c:""},
+  {n:total,l:"Requirements",c:""},
+  {n:counts.Implemented,l:"Implemented",c:"green"},
+  {n:counts.Partial,l:"Partial",c:"amber"},
+  {n:counts.Gap,l:"Gap",c:"red"},
+].map(k=>`<div class="kpi ${k.c}"><div class="n">${k.n}</div><div class="l">${k.l}</div></div>`).join("");
+
+function stackBar(c){
+  const t=c.Implemented+c.Partial+c.Gap||1;
+  return `<span class="s-impl" style="width:${100*c.Implemented/t}%"></span>`+
+         `<span class="s-part" style="width:${100*c.Partial/t}%"></span>`+
+         `<span class="s-gap" style="width:${100*c.Gap/t}%"></span>`;
+}
+document.getElementById("covBar").innerHTML = stackBar(counts);
+document.getElementById("covPct").textContent = cov + "% coverage";
+document.getElementById("cImpl").textContent = counts.Implemented;
+document.getElementById("cPart").textContent = counts.Partial;
+document.getElementById("cGap").textContent = counts.Gap;
+
+/* ---------- framework filter buttons ---------- */
+const fwF = document.getElementById("fwFilter");
+fwF.innerHTML = `<button data-fw="all" class="active">All frameworks</button>` +
+  DATA.frameworks.map(f=>`<button data-fw="${f.frameworkId}"><span class="fwdot" style="background:${FW_COLOR[f.frameworkId]}"></span>${esc(f.name.replace(/ Artificial.*| general-purpose.*| for LLM.*/,""))}</button>`).join("");
+fwF.addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b)return;
+  state.fw=b.dataset.fw;
+  [...fwF.children].forEach(x=>x.classList.toggle("active",x===b));
+  render();
+});
+
+/* ---------- status segment ---------- */
+const seg=document.getElementById("statusSeg");
+seg.addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b)return;
+  state.status=b.dataset.s;
+  [...seg.children].forEach(x=>x.classList.toggle("active",x===b));
+  render();
+});
+document.getElementById("search").addEventListener("input",e=>{state.q=e.target.value.toLowerCase();render();});
+
+/* ---------- theme ---------- */
+const tb=document.getElementById("themeBtn");
+tb.addEventListener("click",()=>{
+  const dark=document.documentElement.getAttribute("data-theme")==="dark";
+  document.documentElement.setAttribute("data-theme",dark?"light":"dark");
+  tb.textContent = dark ? "🌙 Dark" : "☀️ Light";
+});
+
+/* ---------- render ---------- */
+function reqMatches(r){
+  if(state.status!=="all" && r._s!==state.status) return false;
+  if(state.q){
+    const hay=(r.requirementId+" "+r.title+" "+r.description+" "+r.mappedComponents.join(" ")+" "+r.evidence.join(" ")+" "+(r.notes||"")).toLowerCase();
+    if(!hay.includes(state.q)) return false;
+  }
+  return true;
+}
+function render(){
+  const list=document.getElementById("list");
+  const fws=DATA.frameworks.filter(f=>state.fw==="all"||f.frameworkId===state.fw);
+  let html="", shown=0;
+  fws.forEach(f=>{
+    const reqs=f.requirements.map(r=>({...r,_s:norm(r.status)})).filter(reqMatches);
+    if(!reqs.length) return;
+    shown+=reqs.length;
+    const c={Implemented:0,Partial:0,Gap:0}; reqs.forEach(r=>c[r._s]++);
+    const col=FW_COLOR[f.frameworkId];
+    html+=`<section class="fw" style="--fw:${col}">
+      <div class="fw-head">
+        <div class="fw-title">
+          <span class="fwdot" style="width:11px;height:11px;border-radius:50%;background:${col}"></span>
+          <h2>${esc(f.name)}</h2><span class="ver">v${esc(f.version)}</span>
+          <a href="${esc(f.sourceUrl)}" target="_blank" rel="noopener">source ↗</a>
+        </div>
+        <div class="fw-sum">${esc(f.alignmentSummary)}</div>
+        <div class="fw-mini">
+          <div class="bar">${stackBar(c)}</div>
+          <span class="counts"><b style="color:var(--green)">${c.Implemented}</b> impl · <b style="color:var(--amber)">${c.Partial}</b> partial · <b style="color:var(--red)">${c.Gap}</b> gap</span>
+        </div>
+        <div class="comp-row"><span style="font-weight:700;color:var(--ink)">Components:</span> ${f.projectComponents.map(x=>`<span class="chip">${esc(x)}</span>`).join("")}</div>
+      </div>
+      <div class="reqs">
+        ${reqs.map(r=>`
+          <div class="req">
+            <div class="req-head">
+              <span class="req-id">${esc(r.requirementId)}</span>
+              <span class="req-title">${esc(r.title)}</span>
+              <span class="badge ${badgeClass(r._s)}">${r._s}</span>
+            </div>
+            <div class="req-desc">${esc(r.description)}</div>
+            <div class="req-meta"><span class="lab">Mapped components:</span>${r.mappedComponents.map(x=>`<span class="chip">${esc(x)}</span>`).join("")}</div>
+            <div class="req-meta"><span class="lab">Evidence:</span>${r.evidence.map(x=>`<span class="chip mono">${esc(x)}</span>`).join("")}</div>
+            ${r.notes?`<div class="req-notes">${esc(r.notes)}</div>`:""}
+          </div>`).join("")}
+      </div>
+    </section>`;
+  });
+  list.innerHTML = shown ? html : `<div class="empty">No requirements match the current filters.</div>`;
+}
+render();
+</script>
+</body>
+</html>
